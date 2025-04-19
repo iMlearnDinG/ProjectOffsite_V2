@@ -7,25 +7,17 @@
     <link rel="shortcut icon" href="TemplateData/favicon.ico">
     <link rel="stylesheet" href="TemplateData/style.css">
     <style>
-      /* Set the background for the entire page with scaled size (80% of 2560x1440) */
+      /* Set the background for the entire page with constant size */
       body {
-        background: url('Build/background-image.png') no-repeat center center fixed, #1a1a1a; /* Fallback color */
-        background-size: 2048px 1152px; /* 80% of 2560x1440 */
+        background: url('Build/background-image.png') no-repeat center center;
+        background-size: 2048px 1152px; /* Use native image size; replace with '1280px 720px' for fixed size */
         margin: 0;
         padding: 0;
         height: 100vh;
-        display: flex; /* Center the unity-container */
-        justify-content: center;
-        align-items: center;
       }
       /* Ensure the Unity container doesn't override the background */
       #unity-container {
         background: transparent;
-        position: relative; /* Ensure proper positioning of child elements */
-      }
-      /* Style the canvas to ensure it’s centered */
-      #unity-canvas {
-        display: block; /* Prevent inline-block spacing issues */
       }
     </style>
   </head>
@@ -51,6 +43,9 @@
       // Shows a temporary message banner/ribbon for a few seconds, or
       // a permanent error message on top of the canvas if type=='error'.
       // If type=='warning', a yellow highlight color is used.
+      // Modify or remove this function to customize the visually presented
+      // way that non-critical warnings and error messages are presented to the
+      // user.
       function unityShowBanner(msg, type) {
         var warningBanner = document.querySelector("#unity-warning");
         function updateBannerVisibility() {
@@ -91,17 +86,13 @@
         document.getElementsByTagName('head')[0].appendChild(meta);
         document.querySelector("#unity-container").className = "unity-mobile";
         canvas.className = "unity-mobile";
-        // Scale canvas for mobile to mimic 80% zoom
-        canvas.style.width = "1024px"; // 80% of 1280
-        canvas.style.height = "576px"; // 80% of 720
       } else {
-        // Scale canvas for desktop to mimic 80% zoom
-        canvas.style.width = "1024px"; // 80% of 1280
-        canvas.style.height = "576px"; // 80% of 720
+        canvas.style.width = "1280px";
+        canvas.style.height = "720px";
       }
 
-      // Set canvas to transparent to show body background
-      canvas.style.background = "transparent";
+      // Updated line to use custom .png with constant size
+      canvas.style.background = "url('" + buildUrl + "/custom-background.png') center / auto";
 
       document.querySelector("#unity-loading-bar").style.display = "block";
 
