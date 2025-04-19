@@ -7,23 +7,39 @@
     <link rel="shortcut icon" href="TemplateData/favicon.ico">
     <link rel="stylesheet" href="TemplateData/style.css">
     <style>
-      /* Set the background for the entire page with constant size */
+      /* Set the background for the entire page */
       body {
-        background: url('Build/background-image.png') no-repeat center center;
-        background-size: 2048px 1152px; /* Use native image size; replace with '1280px 720px' for fixed size */
+        background: url('Build/background-image.png') no-repeat center center fixed, #1a1a1a; /* Fallback color */
+        background-size: 2560px 1440px; /* Original size; use 'auto' for native size */
         margin: 0;
         padding: 0;
         height: 100vh;
+        display: flex; /* Center the unity-container */
+        justify-content: center;
+        align-items: center;
       }
-      /* Ensure the Unity container doesn't override the background */
+      /* Scale and center the Unity container */
       #unity-container {
         background: transparent;
+        transform: scale(0.8); /* Mimic 80% zoom */
+        transform-origin: center center; /* Scale from center */
+        position: relative; /* Ensure child elements position correctly */
+      }
+      /* Ensure canvas is properly displayed */
+      #unity-canvas {
+        display: block; /* Prevent inline-block spacing issues */
+      }
+      /* Optional: Adjust for mobile to maintain scaling */
+      @media (max-width: 800px) {
+        #unity-container {
+          transform: scale(0.7); /* Slightly smaller for mobile if needed */
+        }
       }
     </style>
   </head>
   <body>
     <div id="unity-container" class="unity-desktop">
-      <canvas id="unity-canvas" width=800 height=640 tabindex="-1"></canvas>
+      <canvas id="unity-canvas" width=800 height=540 tabindex="-1"></canvas>
       <div id="unity-loading-bar">
         <div id="unity-logo"></div>
         <div id="unity-progress-bar-empty">
@@ -43,9 +59,6 @@
       // Shows a temporary message banner/ribbon for a few seconds, or
       // a permanent error message on top of the canvas if type=='error'.
       // If type=='warning', a yellow highlight color is used.
-      // Modify or remove this function to customize the visually presented
-      // way that non-critical warnings and error messages are presented to the
-      // user.
       function unityShowBanner(msg, type) {
         var warningBanner = document.querySelector("#unity-warning");
         function updateBannerVisibility() {
@@ -86,13 +99,16 @@
         document.getElementsByTagName('head')[0].appendChild(meta);
         document.querySelector("#unity-container").className = "unity-mobile";
         canvas.className = "unity-mobile";
+        // Maintain canvas size for mobile, scaling is handled by CSS
+        canvas.style.width = "800px";
+        canvas.style.height = "540px";
       } else {
         canvas.style.width = "800px";
-        canvas.style.height = "640px";
+        canvas.style.height = "540px";
       }
 
-      // Updated line to use custom .png with constant size
-      canvas.style.background = "url('" + buildUrl + "/custom-background.png') center / auto";
+      // Set canvas to transparent to show body background
+      canvas.style.background = "transparent";
 
       document.querySelector("#unity-loading-bar").style.display = "block";
 
