@@ -12,7 +12,7 @@
       /* Set the background for the entire page with constant size */
       body {
         background: url('Build/background-image2.png') no-repeat center center;
-        background-size: 1920px 1080px; /* Use native image size; replace with '1280px 720px' for fixed size */
+        background-size: 2560px 1440px; /* Use native image size; replace with '1280px 720px' for fixed size */
         margin: 0;
         padding: 0;
         height: 100vh;
@@ -20,6 +20,7 @@
       /* Ensure the Unity container doesn't override the background */
       #unity-container {
         background: transparent;
+        margin-top: 60px;
       }
       /* Style for the ad container */
       .ad-container {
@@ -41,9 +42,7 @@
       </div>
       <div id="unity-warning"> </div>
       <div id="unity-footer">
-        <div id="unity-logo-title-footer"></div>
         <div id="unity-fullscreen-button"></div>
-        <div id="unity-build-title">deadcity.io</div>
       </div>
     </div>
 
@@ -93,9 +92,10 @@
       var loaderUrl = buildUrl + "/702ce58b430a5b5d2551ad50cc2dd54f.loader.js";
       var config = {
         arguments: [],
-        dataUrl: buildUrl + "/1b5d5cdf88077e45c9deb19441cbb81b.data.unityweb",
+        dataUrl: buildUrl + "/53370564c091f8a12d7af967bfb9a72e.data.unityweb",
         frameworkUrl: buildUrl + "/c3cbac7a3c5f147ff1e083d6279dbadf.framework.js.unityweb",
-        codeUrl: buildUrl + "/c0b34d3eab1e36723d132d8bce7259c8.wasm.unityweb",
+        codeUrl: buildUrl + "/c0b34d3eab1e36723d132d8bce7259c8.wasm.unityweb
+",
         streamingAssetsUrl: "StreamingAssets",
         companyName: "BigFatDog",
         productName: "deadcity.io",
@@ -135,8 +135,8 @@
 
       } else {
         // Desktop style: Render the game canvas in a window that can be maximized to fullscreen:
-        canvas.style.width = "1280px";
-        canvas.style.height = "720px";
+        canvas.style.width = "640px";
+        canvas.style.height = "320px";
       }
 
       canvas.style.background = "url('" + buildUrl + "/a4ec65f1e36639260e088d38a7fdfca1.jpg') center / cover";
