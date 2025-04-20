@@ -6,8 +6,7 @@
     <title>Unity Web Player | deadcity.io</title>
     <link rel="shortcut icon" href="TemplateData/favicon.ico">
     <link rel="stylesheet" href="TemplateData/style.css">
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2365517975623741"
-     crossorigin="anonymous"></script>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2365517975623741" crossorigin="anonymous"></script>
     <style>
       /* Set the background for the entire page with constant size */
       body {
@@ -20,6 +19,13 @@
       /* Ensure the Unity container doesn't override the background */
       #unity-container {
         background: transparent;
+      }
+      /* Style for the ad container */
+      .ad-container {
+        text-align: center;
+        padding: 10px 0;
+        margin-top: 10px; /* Space between Unity container and ad */
+        width: 100%;
       }
     </style>
   </head>
@@ -38,6 +44,21 @@
         <div id="unity-build-title">deadcity.io</div>
       </div>
     </div>
+
+    <!-- AdSense Ad Unit (ad-banner-bottom) -->
+    <div class="ad-container">
+      <!-- ad-banner-bottom -->
+      <ins class="adsbygoogle"
+           style="display:block"
+           data-ad-client="ca-pub-2365517975623741"
+           data-ad-slot="4468358463"
+           data-ad-format="auto"
+           data-full-width-responsive="true"></ins>
+      <script>
+           (adsbygoogle = window.adsbygoogle || []).push({});
+      </script>
+    </div>
+
     <script>
       var canvas = document.querySelector("#unity-canvas");
 
