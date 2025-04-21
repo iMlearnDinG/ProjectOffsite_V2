@@ -58,8 +58,10 @@
             text-align: center;
             padding: 10px 0;
             background: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
-            /* Constrain height for desktop */
-            height: 110px; /* Fixed height to accommodate ad + padding */
+            /* Responsive height based on viewport */
+            height: 15vh; /* 15% of viewport height */
+            min-height: 80px; /* Minimum height for usability */
+            max-height: 110px; /* Maximum height for desktop */
         }
 
         /* Constrain the ad unit size */
@@ -69,31 +71,52 @@
             max-width: 728px !important; /* Cap at standard leaderboard width */
             min-width: 320px !important; /* Minimum width for mobile */
             height: auto !important; /* Let height adjust dynamically */
-            max-height: 90px !important; /* Cap height to prevent excessive size */
+            max-height: calc(15vh - 20px) !important; /* Match container height minus padding */
+            min-height: 60px !important; /* Minimum ad height */
             margin: 0 auto !important; /* Center the ad within the container */
         }
 
-        /* Mobile-specific styles */
+        /* Mobile-specific styles (max-width 768px) */
         @media only screen and (max-width: 768px) {
             #unity-container {
                 width: 90vw; /* Wider on mobile to use more screen space */
                 max-width: 640px; /* Cap at original canvas size */
-                /* Adjust top position to leave space for ad */
-                top: 45%; /* Slightly higher to account for ad banner */
             }
 
             .ad-container {
-                height: 80px; /* Smaller fixed height on mobile */
+                height: 12vh; /* Smaller percentage on mobile */
+                min-height: 60px; /* Reduced minimum height */
+                max-height: 80px; /* Reduced maximum height */
                 padding: 5px 0; /* Reduced padding */
             }
 
             .adsbygoogle {
-                max-height: 70px !important; /* Smaller height cap for mobile */
+                max-height: calc(12vh - 10px) !important; /* Match container height minus padding */
+                min-height: 50px !important; /* Reduced minimum ad height */
                 min-width: 300px !important; /* Slightly smaller min-width for smaller screens */
             }
 
             #unity-footer {
                 bottom: -30px; /* Adjust footer position for smaller ad height */
+            }
+        }
+
+        /* Extra small viewports (height less than 500px) */
+        @media only screen and (max-height: 500px) {
+            .ad-container {
+                height: 10vh; /* Even smaller percentage for very short viewports */
+                min-height: 50px; /* Further reduced minimum height */
+                max-height: 60px; /* Further reduced maximum height */
+                padding: 5px 0;
+            }
+
+            .adsbygoogle {
+                max-height: calc(10vh - 10px) !important; /* Match container height minus padding */
+                min-height: 40px !important; /* Further reduced minimum ad height */
+            }
+
+            #unity-footer {
+                bottom: -20px; /* Adjust footer position for smaller ad height */
             }
         }
     </style>
@@ -169,13 +192,16 @@
       function resizeCanvas() {
         var container = document.querySelector("#unity-container");
         var footer = document.querySelector("#unity-footer");
+        var adContainer = document.querySelector(".ad-container");
         var aspectRatio = 2 / 1; // Original aspect ratio (640x320)
         var containerWidth = Math.min(window.innerWidth * 0.5, 1280); // 50% of viewport width, capped at 1280px
         var containerHeight = containerWidth / aspectRatio; // Height based on aspect ratio
 
-        // Ensure container doesn't exceed viewport height
-        if (containerHeight > window.innerHeight * 0.8) {
-          containerHeight = window.innerHeight * 0.8;
+        // Ensure container doesn't exceed viewport height, accounting for ad banner
+        var adHeight = adContainer.getBoundingClientRect().height;
+        var availableHeight = window.innerHeight - adHeight; // Viewport height minus ad height
+        if (containerHeight > availableHeight * 0.8) {
+          containerHeight = availableHeight * 0.8;
           containerWidth = containerHeight * aspectRatio;
         }
 
@@ -184,12 +210,27 @@
         canvas.style.width = containerWidth + "px";
         canvas.style.height = containerHeight + "px";
 
+        // Adjust top position to center within available space
+        var topPosition = (availableHeight / 2 + adHeight) / window.innerHeight * 100;
+        container.style.top = topPosition + "%";
+
         // Ensure footer stays below the canvas
         footer.style.bottom = "-40px"; // Match the CSS value
 
-        // On mobile, adjust canvas position to avoid ad overlap
+        // On mobile, apply additional adjustments
         if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
-          container.style.top = "45%"; // Match the CSS value
+          container.style.width = Math.min(window.innerWidth * 0.9, 640) + "px"; // Match media query
+          containerHeight = containerWidth / aspectRatio;
+          if (containerHeight > availableHeight * 0.8) {
+            containerHeight = availableHeight * 0.8;
+            containerWidth = containerHeight * aspectRatio;
+          }
+          container.style.width = containerWidth + "px";
+          container.style.height = containerHeight + "px";
+          canvas.style.width = containerWidth + "px";
+          canvas.style.height = containerHeight + "px";
+          topPosition = (availableHeight / 2 + adHeight) / window.innerHeight * 100;
+          container.style.top = topPosition + "%";
         }
       }
 
