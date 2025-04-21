@@ -39,7 +39,7 @@
 
         #unity-footer {
             position: absolute;
-            bottom: -40px; /* Position below the canvas (adjust as needed) */
+            bottom: -40px; /* Position below the canvas */
             left: 50%;
             transform: translateX(-50%); /* Center horizontally */
             width: 100%;
@@ -58,9 +58,11 @@
             text-align: center;
             padding: 5px 0; /* Reduced padding for consistent height */
             background: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
-            height: 10vh; /* Fixed 10% of viewport height */
+            height: 10vh !important; /* Fixed 10% of viewport height */
             min-height: 50px; /* Minimum height for usability */
-            max-height: 90px; /* Maximum height to prevent oversized ads */
+            max-height: 90px !important; /* Maximum height to prevent oversized ads */
+            overflow: hidden; /* Prevent ad from expanding container */
+            box-sizing: border-box; /* Include padding in height calculation */
         }
 
         .adsbygoogle {
@@ -126,7 +128,7 @@
         <ins class="adsbygoogle"
              data-ad-client="ca-pub-2365517975623741"
              data-ad-slot="4468358463"
-             data-ad-format="auto"
+             data-ad-format="horizontal"
              data-full-width-responsive="true"></ins>
         <script>
             (adsbygoogle = window.adsbygoogle || []).push({});
@@ -173,6 +175,28 @@
         matchWebGLToCanvasSize: true // Ensure Unity matches canvas size
       };
 
+      // Debounce function to limit resize event frequency
+      function debounce(func, wait) {
+        var timeout;
+        return function executedFunction() {
+          var context = this;
+          var args = arguments;
+          clearTimeout(timeout);
+          timeout = setTimeout(function() {
+            func.apply(context, args);
+          }, wait);
+        };
+      }
+
+      // Function to enforce ad container height
+      function enforceAdHeight() {
+        var adContainer = document.querySelector(".ad-container");
+        var maxHeight = Math.min(window.innerHeight * 0.1, 90); // 10vh, capped at 90px
+        if (adContainer.offsetHeight > maxHeight) {
+          adContainer.style.height = maxHeight + "px";
+        }
+      }
+
       // Function to resize the canvas to match the container while preserving aspect ratio
       function resizeCanvas() {
         var container = document.querySelector("#unity-container");
@@ -183,9 +207,7 @@
         var containerHeight = containerWidth / aspectRatio; // Height based on aspect ratio
 
         // Account for fixed 10vh ad height (converted to pixels)
-        var adHeight = window.innerHeight * 0.1; // 10% of viewport height
-        adHeight = Math.max(adHeight, 50); // Respect min-height
-        adHeight = Math.min(adHeight, 90); // Respect max-height
+        var adHeight = Math.min(Math.max(window.innerHeight * 0.1, 50), 90); // 10vh, clamped between 50px and 90px
         var availableHeight = window.innerHeight - adHeight; // Viewport height minus ad height
 
         // Ensure container doesn't exceed 80% of available height
@@ -222,19 +244,27 @@
           container.style.top = topPosition + "%";
           footer.style.bottom = "-30px"; // Match mobile CSS value
         }
+
+        // Enforce ad height after resize
+        enforceAdHeight();
       }
 
       // Initial resize
       resizeCanvas();
 
-      // Resize on window resize
-      window.addEventListener("resize", resizeCanvas);
+      // Resize on window resize with debounce
+      window.addEventListener("resize", debounce(resizeCanvas, 100));
+
+      // Enforce ad height after ad load
+      window.addEventListener("load", function() {
+        setTimeout(enforceAdHeight, 1000); // Wait for ad to load
+      });
 
       if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
         // Mobile device: Fullscreen canvas
         var meta = document.createElement('meta');
         meta.name = 'viewport';
-        meta.content = 'width=device-width, height=device-height, initial-scale=1.0, user-scalable=no, shrink-to-fit=yes';
+        meta.content = 'width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover';
         document.getElementsByTagName('head')[0].appendChild(meta);
         document.querySelector("#unity-container").className = "unity-mobile";
         canvas.className = "unity-mobile";
