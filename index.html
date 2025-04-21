@@ -58,6 +58,19 @@
             text-align: center;
             padding: 10px 0;
             background: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+            /* Ensure the container doesn't shrink too much */
+            min-height: 60px; /* Minimum height to accommodate smaller ads */
+        }
+
+        /* Constrain the ad unit size */
+        .adsbygoogle {
+            display: block !important; /* Ensure block display */
+            width: 100% !important; /* Fill container */
+            max-width: 728px !important; /* Cap at standard leaderboard width */
+            min-width: 320px !important; /* Minimum width for mobile */
+            height: auto !important; /* Let height adjust dynamically */
+            max-height: 90px !important; /* Cap height to prevent excessive size */
+            margin: 0 auto !important; /* Center the ad within the container */
         }
     </style>
 </head>
@@ -79,7 +92,6 @@
     <!-- AdSense Ad Unit (ad-banner-bottom) -->
     <div class="ad-container">
         <ins class="adsbygoogle"
-             style="display:block"
              data-ad-client="ca-pub-2365517975623741"
              data-ad-slot="4468358463"
              data-ad-format="auto"
