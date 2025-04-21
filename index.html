@@ -16,34 +16,39 @@
             padding: 0;
             height: 100vh;
             overflow: hidden; /* Prevent scrollbars */
+            display: flex; /* Use flexbox for layout */
+            flex-direction: column; /* Stack children vertically */
         }
 
         #unity-container {
             background: transparent;
-            position: absolute;
-            top: 50%; /* Center vertically */
-            left: 50%; /* Center horizontally */
-            transform: translate(-50%, -50%); /* Center container */
-            width: 50vw; /* Default width */
-            max-width: 1280px; /* Cap maximum size (2x original 640px) */
-            aspect-ratio: 2 / 1; /* Maintain 640x320 aspect ratio */
+            flex: 1; /* Take up remaining space */
             display: flex;
             justify-content: center;
             align-items: center;
+            width: 50vw; /* Default width */
+            max-width: 1280px; /* Cap maximum size (2x original 640px) */
+            aspect-ratio: 2 / 1; /* Maintain 640x320 aspect ratio */
+            margin: 0 auto; /* Center horizontally */
         }
 
         #unity-canvas {
-            width: 100%; /* Fill container */
+            width: 100%; đô/* Fill container */
             height: 100%; /* Fill container */
         }
 
         #unity-footer {
             position: absolute;
-            bottom: -40px; /* Position below the canvas (adjust as needed) */
+            bottom: 0; /* Position below the canvas */
             left: 50%;
             transform: translateX(-50%); /* Center horizontally */
             width: 100%;
             text-align: center;
+            pointer-events: none; /* Prevent footer from blocking clicks */
+        }
+
+        #unity-footer * {
+            pointer-events: auto; /* Allow clicks on footer elements */
         }
 
         #unity-fullscreen-button {
@@ -52,8 +57,6 @@
         }
 
         .ad-container {
-            position: absolute;
-            bottom: 0;
             width: 100%;
             text-align: center;
             padding: 10px 0;
@@ -62,6 +65,7 @@
             height: 15vh; /* 15% of viewport height */
             min-height: 80px; /* Minimum height for usability */
             max-height: 110px; /* Maximum height for desktop */
+            flex-shrink: 0; /* Prevent ad container from shrinking */
         }
 
         /* Constrain the ad unit size */
@@ -97,7 +101,7 @@
             }
 
             #unity-footer {
-                bottom: -30px; /* Adjust footer position for smaller ad height */
+                bottom: 0; /* Align with ad container */
             }
         }
 
@@ -116,7 +120,7 @@
             }
 
             #unity-footer {
-                bottom: -20px; /* Adjust footer position for smaller ad height */
+                bottom: 0; /* Align with ad container */
             }
         }
     </style>
@@ -192,14 +196,12 @@
       function resizeCanvas() {
         var container = document.querySelector("#unity-container");
         var footer = document.querySelector("#unity-footer");
-        var adContainer = document.querySelector(".ad-container");
         var aspectRatio = 2 / 1; // Original aspect ratio (640x320)
         var containerWidth = Math.min(window.innerWidth * 0.5, 1280); // 50% of viewport width, capped at 1280px
         var containerHeight = containerWidth / aspectRatio; // Height based on aspect ratio
 
-        // Ensure container doesn't exceed viewport height, accounting for ad banner
-        var adHeight = adContainer.getBoundingClientRect().height;
-        var availableHeight = window.innerHeight - adHeight; // Viewport height minus ad height
+        // Ensure container doesn't exceed available height (flexbox handles separation)
+        var availableHeight = container.parentElement.clientHeight; // Body height (viewport height)
         if (containerHeight > availableHeight * 0.8) {
           containerHeight = availableHeight * 0.8;
           containerWidth = containerHeight * aspectRatio;
@@ -209,13 +211,6 @@
         container.style.height = containerHeight + "px";
         canvas.style.width = containerWidth + "px";
         canvas.style.height = containerHeight + "px";
-
-        // Adjust top position to center within available space
-        var topPosition = (availableHeight / 2 + adHeight) / window.innerHeight * 100;
-        container.style.top = topPosition + "%";
-
-        // Ensure footer stays below the canvas
-        footer.style.bottom = "-40px"; // Match the CSS value
 
         // On mobile, apply additional adjustments
         if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
@@ -229,8 +224,6 @@
           container.style.height = containerHeight + "px";
           canvas.style.width = containerWidth + "px";
           canvas.style.height = containerHeight + "px";
-          topPosition = (availableHeight / 2 + adHeight) / window.innerHeight * 100;
-          container.style.top = topPosition + "%";
         }
       }
 
