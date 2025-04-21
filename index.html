@@ -58,8 +58,8 @@
             text-align: center;
             padding: 10px 0;
             background: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
-            /* Ensure the container doesn't shrink too much */
-            min-height: 60px; /* Minimum height to accommodate smaller ads */
+            /* Constrain height for desktop */
+            height: 110px; /* Fixed height to accommodate ad + padding */
         }
 
         /* Constrain the ad unit size */
@@ -71,6 +71,30 @@
             height: auto !important; /* Let height adjust dynamically */
             max-height: 90px !important; /* Cap height to prevent excessive size */
             margin: 0 auto !important; /* Center the ad within the container */
+        }
+
+        /* Mobile-specific styles */
+        @media only screen and (max-width: 768px) {
+            #unity-container {
+                width: 90vw; /* Wider on mobile to use more screen space */
+                max-width: 640px; /* Cap at original canvas size */
+                /* Adjust top position to leave space for ad */
+                top: 45%; /* Slightly higher to account for ad banner */
+            }
+
+            .ad-container {
+                height: 80px; /* Smaller fixed height on mobile */
+                padding: 5px 0; /* Reduced padding */
+            }
+
+            .adsbygoogle {
+                max-height: 70px !important; /* Smaller height cap for mobile */
+                min-width: 300px !important; /* Slightly smaller min-width for smaller screens */
+            }
+
+            #unity-footer {
+                bottom: -30px; /* Adjust footer position for smaller ad height */
+            }
         }
     </style>
 </head>
@@ -162,6 +186,11 @@
 
         // Ensure footer stays below the canvas
         footer.style.bottom = "-40px"; // Match the CSS value
+
+        // On mobile, adjust canvas position to avoid ad overlap
+        if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
+          container.style.top = "45%"; // Match the CSS value
+        }
       }
 
       // Initial resize
